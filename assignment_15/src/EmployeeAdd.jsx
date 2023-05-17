@@ -1,107 +1,42 @@
-import ReactDOM from 'react-dom';
-import React from 'react';
-import axios from 'axios';
-import querystring from 'querystring';
-import Split from 'react-split'
+import React from 'react'
 
+export default class EmployeeAdd extends React.Component {
 
-export default class addEmp extends React.Component {
-    constructor(props) {
-      super(props);
-      // Default null value
-      this.state = {Name: '',
-      Designation: '', Salary: ''};
-
-   //Handles text change 
-      this.handleChangeN = this.handleChangeN.bind(this);
-      this.handleChangeD = this.handleChangeD.bind(this);
-      this.handleChangeS = this.handleChangeS.bind(this);
-
-  //Handles button click event
-  this.handleSubmit = this.handleSubmit.bind(this);
+    constructor() {
+        super()
+        this.handleSubmit = this.handleSubmit.bind(this)
     }
 
-  //Sets recent values to the components 
-    handleChangeN(event) {
-      const re = /^[a-zA-Z]*$/;
+    handleSubmit(e) {
+        e.preventDefault()
+        const form = document.forms.employeeAdd;
 
-      // if value is not blank, then test the regex
-  
-      if (event.target.value === '' || re.test(event.target.value)) {
-         this.setState({Name: event.target.value})
-      }
-      else{
-          alert("Please enter a valid Name");
-      }
-    
+        //creating employee object
+        const employee = {
+            name: form.name.value,
+            extension: form.ext.value,
+            email: form.email.value,
+            title: form.title.value,
+        }
+        this.props.createEmployee(employee)
+
+        //reset the form
+        form.name.value = ''
+        form.ext.value = ''
+        form.email.value = ''
+        form.title.value = ''
     }
 
-    handleChangeD(event) {
-      const re = /^[a-zA-Z]*$/;
-
-      // if value is not blank, then test the regex
-  
-      if (event.target.value === '' || re.test(event.target.value)) {
-         this.setState({Designation: event.target.value})
-      }
-      else{
-          alert("Please enter a valid designation");
-
-      }
-    
-    }
-
-    handleChangeS(event) {
-      console.log(event.target.value);
-
-      const re = /^[0-9\b]+$/;
-
-      // if value is not blank, then test the regex
-  
-      if (event.target.value === '' || re.test(event.target.value)) {
-         this.setState({Salary: event.target.value})
-      }
-      else{
-          alert("Please enter a valid salary");
-      }
-    
-    }
-  
-    //An alert message for proper submition
-    handleSubmit(event) {
-      event.preventDefault();
-
-    var data = 
-            {
-             'Name': this.state.Name,
-             'Designation': this.state.Designation,
-             'Salary': this.state.Salary
-            };
-
-            axios.post('http://localhost:5000/addemp', querystring.stringify(data))
-            .then(res=>{console.log(res);
-            })
-            .catch(err=>{console.log(err);
-            })
-
-            window.location.assign("/");
-}
-    
     render() {
-      return (
-        <div className= "EmpData">
-        <form className="NewEmp" method="POST"   onSubmit={this.handleSubmit}>
-         <input id = "Name" placeholder = "Employee Name" onChange={this.handleChangeN} required/><br></br>
-         <input id = "Designation" placeholder = "Employee Designation" onChange={this.handleChangeD} required/><br></br>
-         <input id = "Salary" placeholder = "Employee Salary" onChange={this.handleChangeS} required/><br></br><br></br>
-         <input type="submit" value="Submit"/>
-        </form>
-        </div>
-      )
+        //rendering the form
+        return (
+            <form name="employeeAdd" onSubmit={this.handleSubmit}> 
+                Name: <input type="text" name="name" /><br/>
+                Extension: <input type="text" name="ext" maxLength={4} /><br/>
+                Email: <input type="text" name="email" /><br/>
+                Title: <input type="text" name="title" /><br/>
+                <button>Add</button>
+            </form>
+        )
     }
-  }
-  
-  ReactDOM.render(
-    <addEmp />,
-    document.getElementById('root')
-  );
+}
